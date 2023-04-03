@@ -51,6 +51,7 @@ def top_k_courses(query_text, k):
 
 @match_blueprint.get('/match/<course_code>')
 @match_blueprint.output(Course(many=True))
+@match_blueprint.output(status_code=400)
 def match_code(course_code):
     courses = get_saved_courses()
 
