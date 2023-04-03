@@ -104,28 +104,31 @@ def fetch_courses():
     """
     logging.debug("Loading courses")
 
-    api_url = os.getenv('COURSE_API_URL')
-    api_key = os.getenv('COURSE_API_KEY')
-    r = requests.get(api_url + api_key)
+    if not os.path.isfile(courses_path) and not os.path.isfile(embeddings_path):
 
-    # get data
-    raw_data = r.json()
+        api_url = os.getenv('COURSE_API_URL')
+        api_key = os.getenv('COURSE_API_KEY')
+        r = requests.get(api_url + api_key)
 
-    en_data = [
-        course for course in raw_data if 'en' in course['languageOfInstructionCodes']]
+        # get data
+        raw_data = r.json()
 
-    logging.debug("Processing courses")
-    courses = pd.json_normalize(en_data)
-    courses = preprocess_courses(courses)
-    course_embeddings = encode_courses(courses)
+        en_data = [
+            course for course in raw_data if 'en' in course['languageOfInstructionCodes']]
 
-    output_file = open(courses_path, 'wb')
-    pickle.dump(courses, output_file)
-    output_file.close()
+        logging.debug("Processing courses")
+        courses = pd.json_normalize(en_data)
+        courses = preprocess_courses(courses)
+        course_embeddings = encode_courses(courses)
 
-    output_file = open(embeddings_path, 'wb')
-    pickle.dump(course_embeddings, output_file)
-    output_file.close()
+        output_file = open(courses_path, 'wb')
+        pickle.dump(courses, output_file)
+        output_file.close()
+
+        output_file = open(embeddings_path, 'wb')
+        pickle.dump(course_embeddings, output_file)
+        output_file.close()
+
     logging.debug("Courses saved")
 
 
