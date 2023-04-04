@@ -15,31 +15,32 @@ embeddings_path = "model/embeddings.pickle"
 
 def clean_html(raw_html):
     """
-    Cleans html tags from text
+    Cleans text from html tags and beautifies it
 
     Args:
-        raw_html (str): Raw html text
+        raw_html (str): raw html text
     Returns:
-        text: text without html tags
+        cleaned_text: cleaned text
     """
     cleaner = re.compile('<.*?>')
     cleaned_text = re.sub(cleaner, '', raw_html)
+    cleaned_text = re.sub(r'\s+', ' ', cleaned_text).strip()
     return cleaned_text
 
 
 def preprocess_courses(courses):
     """
-    Preprocess courses by dropping unnecessary fields
+    Preprocesses courses
 
     Args:
-        courses (pd.Frame): Raw course data
+        courses (pd.Frame): raw course data
     Returns:
-        processed_courses: pre-processed course data
+        courses: preprocessed courses
     """
     courses = courses[
         [
             "id",
-            "code",  # MYCOURSE URL param
+            "code",  # MYCOURSES URL param
             "name.en",
             "courseUnitId",  # SISU URL param
             "languageOfInstructionCodes",
@@ -62,8 +63,8 @@ def preprocess_courses(courses):
     courses = courses.drop_duplicates(subset=["code"], keep="first")
     courses = courses.reset_index(drop=True)
 
-    # remove courses that have content or learning outcomes empty
-    courses = courses[~((courses['content'] == '') |
+    # remove courses that have content and learning outcomes empty
+    courses = courses[~((courses['content'] == '') &
                         (courses['learningOutcomes'] == ''))]
 
     courses['name'] = courses['name'].apply(html.unescape)
@@ -72,13 +73,15 @@ def preprocess_courses(courses):
     courses['learningOutcomes'] = courses['learningOutcomes'].apply(html.unescape)
     courses['learningOutcomes'] = courses['learningOutcomes'].apply(clean_html)
     courses['teachingPeriod'] = courses['teachingPeriod'].apply(html.unescape)
+    courses['teachingPeriod'] = courses['teachingPeriod'].apply(clean_html)
     courses['languageOfInstructionCodes'] = courses['languageOfInstructionCodes'].apply(lambda x: x[0])
 
-    # Concat content and learning outcomes to form desc with is used for calculating embeddings
+    # concat content and learning outcomes to form desc, which is used for encoding
     courses['desc'] = courses['content'] + ' ' + courses['learningOutcomes']
 
     del courses['content']
     del courses['learningOutcomes']
+
     return courses
 
 
@@ -87,9 +90,9 @@ def encode_courses(courses):
     Encodes courses to embeddings
 
     Args:
-        courses (pd.Frame): Course data
+        courses (pd.Frame): course data
     Returns:
-        corpus_embeddings: course description embeddings
+        course_embeddings: encoded courses
     """
     model = get_saved_model()
     course_embeddings = model.encode(
@@ -104,30 +107,28 @@ def fetch_courses():
     """
     logging.debug("Loading courses")
 
-    if not os.path.isfile(courses_path) and not os.path.isfile(embeddings_path):
+    api_url = os.getenv('COURSE_API_URL')
+    api_key = os.getenv('COURSE_API_KEY')
+    r = requests.get(api_url + api_key)
 
-        api_url = os.getenv('COURSE_API_URL')
-        api_key = os.getenv('COURSE_API_KEY')
-        r = requests.get(api_url + api_key)
+    # get data
+    raw_data = r.json()
 
-        # get data
-        raw_data = r.json()
+    en_data = [
+        course for course in raw_data if 'en' in course['languageOfInstructionCodes']]
 
-        en_data = [
-            course for course in raw_data if 'en' in course['languageOfInstructionCodes']]
+    logging.debug("Processing courses")
+    courses = pd.json_normalize(en_data)
+    courses = preprocess_courses(courses)
+    course_embeddings = encode_courses(courses)
 
-        logging.debug("Processing courses")
-        courses = pd.json_normalize(en_data)
-        courses = preprocess_courses(courses)
-        course_embeddings = encode_courses(courses)
+    output_file = open(courses_path, 'wb')
+    pickle.dump(courses, output_file)
+    output_file.close()
 
-        output_file = open(courses_path, 'wb')
-        pickle.dump(courses, output_file)
-        output_file.close()
-
-        output_file = open(embeddings_path, 'wb')
-        pickle.dump(course_embeddings, output_file)
-        output_file.close()
+    output_file = open(embeddings_path, 'wb')
+    pickle.dump(course_embeddings, output_file)
+    output_file.close()
 
     logging.debug("Courses saved")
 

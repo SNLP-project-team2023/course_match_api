@@ -8,7 +8,7 @@ model_path = "model/model.pickle"
 
 def load_model():
     """
-    loads model on start and save with pickle
+    Loads model on start and save with pickle
     """
     logging.debug("Loading model")
 

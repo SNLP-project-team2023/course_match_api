@@ -12,7 +12,7 @@ from apiflask import APIFlask
 
 load_dotenv()
 
-# Schedule cron fetch courses job
+# Schedule fetch courses job to run every 24 hours at 03:00
 scheduler = BackgroundScheduler(daemon=True)
 trigger = CronTrigger(
     year="*", month="*", day="*", hour="3", minute="0", second="0"
@@ -32,7 +32,7 @@ app.register_blueprint(match_blueprint)
 manager = Manager(app)
 
 
-# On start loads the model
+# On start load model and fetch courses
 class CustomServer(Server, ABC):
     def __call__(self, app, *args, **kwargs):
         load_model()
