@@ -101,34 +101,36 @@ def encode_courses(courses):
     return course_embeddings
 
 
-def fetch_courses():
+def fetch_courses(first_run=False):
     """
     Fetches course from Aalto API gateway, clean the data and save the embeddings and data into files
     """
     logging.debug("Loading courses")
 
-    api_url = os.getenv('COURSE_API_URL')
-    api_key = os.getenv('COURSE_API_KEY')
-    r = requests.get(api_url + api_key)
+    if (not os.path.isfile(courses_path) or not os.path.isfile(embeddings_path)) or not first_run:
+        
+        api_url = os.getenv('COURSE_API_URL')
+        api_key = os.getenv('COURSE_API_KEY')
+        r = requests.get(api_url + api_key)
 
-    # get data
-    raw_data = r.json()
+        # get data
+        raw_data = r.json()
 
-    en_data = [
-        course for course in raw_data if 'en' in course['languageOfInstructionCodes']]
+        en_data = [
+            course for course in raw_data if 'en' in course['languageOfInstructionCodes']]
 
-    logging.debug("Processing courses")
-    courses = pd.json_normalize(en_data)
-    courses = preprocess_courses(courses)
-    course_embeddings = encode_courses(courses)
+        logging.debug("Processing courses")
+        courses = pd.json_normalize(en_data)
+        courses = preprocess_courses(courses)
+        course_embeddings = encode_courses(courses)
 
-    output_file = open(courses_path, 'wb')
-    pickle.dump(courses, output_file)
-    output_file.close()
+        output_file = open(courses_path, 'wb')
+        pickle.dump(courses, output_file)
+        output_file.close()
 
-    output_file = open(embeddings_path, 'wb')
-    pickle.dump(course_embeddings, output_file)
-    output_file.close()
+        output_file = open(embeddings_path, 'wb')
+        pickle.dump(course_embeddings, output_file)
+        output_file.close()
 
     logging.debug("Courses saved")
 

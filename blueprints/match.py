@@ -44,8 +44,8 @@ def top_k_courses(query_text, k, exclude_self=False):
         course.language = hit_course["languageOfInstructionCodes"]
         course.desc = hit_course["desc"]
         course.period = hit_course["teachingPeriod"]
-        course.sisu_link = link_sisu_prefix + hit_course["courseUnitId"]
-        course.mycourses_link = link_mycourses_prefix + hit_course["code"]
+        course.sisu_link = f'{link_prefix}{hit_course["courseUnitId"]}'
+        course.mycourses_link = f'{link_mycourses_prefix}{hit_course["code"]}'
         course.credits = hit_course["credits"]
 
         top_courses.append(course)

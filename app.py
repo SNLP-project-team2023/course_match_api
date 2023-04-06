@@ -36,7 +36,7 @@ manager = Manager(app)
 class CustomServer(Server, ABC):
     def __call__(self, app, *args, **kwargs):
         load_model()
-        fetch_courses()
+        fetch_courses(first_run=True)
         return Server.__call__(self, app, *args, **kwargs)
 
 
