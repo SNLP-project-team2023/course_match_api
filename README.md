@@ -6,8 +6,11 @@ The project is build with ``apiflask``
 https://apiflask.com/
 ```
 
+Python version: 3.11
+
 Install all deps
 ```
+pip install -U pip wheel
 pip install -r requirements.txt
 ```
 
