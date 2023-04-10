@@ -104,6 +104,9 @@ def encode_courses(courses):
 def fetch_courses(first_run=False):
     """
     Fetches course from Aalto API gateway, clean the data and save the embeddings and data into files
+
+    Args:
+        first_run (bool): is this run first time
     """
     logging.debug("Loading courses")
 

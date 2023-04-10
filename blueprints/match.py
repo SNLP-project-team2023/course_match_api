@@ -17,6 +17,7 @@ def top_k_courses(query_text, k, exclude_self=False):
     Args:
         query_text (str): query text
         k (int): k
+        exclude_self (bool): is the query excluded
     Returns:
         top_courses: matched courses
     """
@@ -44,7 +45,7 @@ def top_k_courses(query_text, k, exclude_self=False):
         course.language = hit_course["languageOfInstructionCodes"]
         course.desc = hit_course["desc"]
         course.period = hit_course["teachingPeriod"]
-        course.sisu_link = f'{link_prefix}{hit_course["courseUnitId"]}'
+        course.sisu_link = f'{link_sisu_prefix}{hit_course["courseUnitId"]}'
         course.mycourses_link = f'{link_mycourses_prefix}{hit_course["code"]}'
         course.credits = hit_course["credits"]
 
