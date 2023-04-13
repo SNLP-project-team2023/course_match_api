@@ -6,6 +6,8 @@ from flask_cors import CORS
 from flask_script import Manager, Server
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
+
+from blueprints.course import course_blueprint
 from scheduled.load_model import load_model
 from scheduled.fetch_courses import fetch_courses
 from blueprints.match import match_blueprint
@@ -29,6 +31,7 @@ app = APIFlask(__name__, spec_path='/openapi.yaml')
 app.config['SPEC_FORMAT'] = 'yaml'
 CORS(app)
 app.register_blueprint(match_blueprint)
+app.register_blueprint(course_blueprint)
 
 manager = Manager(app)
 

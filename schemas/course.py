@@ -11,3 +11,9 @@ class Course(Schema):
     sisu_link = fields.String()
     mycourses_link = fields.String()
     credits = fields.Integer(required=True)
+
+
+class CourseAlias(Schema):
+    """Course Alias schema"""
+    name = fields.String(required=True)
+    code = fields.String(required=True)
