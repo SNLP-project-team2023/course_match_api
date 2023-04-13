@@ -2,6 +2,7 @@ from abc import ABC
 
 from dotenv import load_dotenv
 from flask import Flask
+from flask_cors import CORS
 from flask_script import Manager, Server
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -26,7 +27,7 @@ scheduler.start()
 
 app = APIFlask(__name__, spec_path='/openapi.yaml')
 app.config['SPEC_FORMAT'] = 'yaml'
-
+CORS(app)
 app.register_blueprint(match_blueprint)
 
 manager = Manager(app)
