@@ -10,6 +10,8 @@ from schemas.course import Course
 match_blueprint = APIBlueprint('match', __name__)
 
 
+coursesToView = 20
+
 def top_k_courses(query_text, k, exclude_self=False):
     """
     Get top k courses
@@ -66,7 +68,7 @@ def match_code(course_code):
 
     query_text = found_course.iloc[0]["desc"]
 
-    return top_k_courses(query_text, 5, exclude_self=True)
+    return top_k_courses(query_text, coursesToView, exclude_self=True)
 
 
 @match_blueprint.get('/match/text')
@@ -75,5 +77,5 @@ def match_code(course_code):
 def match_text(query):
     query_text = query["query_text"]
 
-    return top_k_courses(query_text, 5, exclude_self=False)
+    return top_k_courses(query_text, coursesToView, exclude_self=False)
 
