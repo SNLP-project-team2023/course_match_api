@@ -12,6 +12,9 @@ def load_model():
     """
     logging.debug("Loading model")
 
+    if not os.path.exists("model"):
+        os.mkdir("model")
+
     if not os.path.isfile(model_path):
 
         model_name = os.getenv('SBERT_MODEL')
@@ -31,4 +34,5 @@ def get_saved_model():
     Returns:
         model: saved model
     """
+    print("SAVED MODEL PATH", model_path)
     return pickle.load(open(model_path, "rb"))
