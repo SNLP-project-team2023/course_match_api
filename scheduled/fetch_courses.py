@@ -112,6 +112,9 @@ def fetch_courses(first_run=False):
 
     if (not os.path.isfile(courses_path) or not os.path.isfile(embeddings_path)) or not first_run:
         
+        assert os.getenv('COURSE_API_URL'), "Environment variable not set in .env, read README first."
+        assert os.getenv('COURSE_API_KEY'), "Environment variable not set in .env, read README first."
+
         api_url = os.getenv('COURSE_API_URL')
         api_key = os.getenv('COURSE_API_KEY')
         r = requests.get(api_url + api_key)
