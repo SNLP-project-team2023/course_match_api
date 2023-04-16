@@ -8,7 +8,7 @@ model_path = "model/model.pickle"
 
 def load_model():
     """
-    Loads model on start and save with pickle
+    Download pre-trained SentenceTransformer model from Huggingface and save to pickle
     """
     logging.debug("Loading model")
 
@@ -29,10 +29,9 @@ def load_model():
 
 def get_saved_model():
     """
-    Gets saved model
+    Load SentenceTransformer from pickle
 
     Returns:
         model: saved model
     """
-    print("SAVED MODEL PATH", model_path)
     return pickle.load(open(model_path, "rb"))
