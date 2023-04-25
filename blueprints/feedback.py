@@ -42,6 +42,9 @@ def feedback(feedback_data):
     """
     Saves feedback
 
+    Args:
+        feedback_data (Feedback): feedback data
+
     Returns:
         feedback: feedback
     """

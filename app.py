@@ -22,16 +22,19 @@ scheduler = BackgroundScheduler(daemon=True)
 trigger = CronTrigger(
     year="*", month="*", day="*", hour="3", minute="0", second="0"
 )
+
 scheduler.add_job(
     fetch_courses,
     trigger=trigger,
     name="fetch_courses",
 )
+
 scheduler.add_job(
     fine_tune_model,
     trigger=trigger,
     name="fine_tune_model",
 )
+
 scheduler.start()
 
 app = APIFlask(__name__, spec_path='/openapi.yaml')
