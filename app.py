@@ -1,9 +1,8 @@
 from abc import ABC
 
+import uvicorn
 from dotenv import load_dotenv
-from flask import Flask
 from flask_cors import CORS
-from flask_script import Manager, Server
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 
@@ -44,18 +43,16 @@ app.register_blueprint(match_blueprint)
 app.register_blueprint(course_blueprint)
 app.register_blueprint(feedback_blueprint)
 
-manager = Manager(app)
 
+load_model()
+fetch_courses(first_run=True)
 
-# On start load model and fetch courses
-class CustomServer(Server, ABC):
-    def __call__(self, app, *args, **kwargs):
-        load_model()
-        fetch_courses(first_run=True)
-        return Server.__call__(self, app, *args, **kwargs)
-
-
-manager.add_command('runserver', CustomServer())
 
 if __name__ == "__main__":
-    manager.run()
+    uvicorn.run(
+        app,
+        port=8000,
+        host='0.0.0.0',
+        ssl_keyfile='key.pem',
+        ssl_certfile='cert.pem'
+    )
