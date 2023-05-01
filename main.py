@@ -1,6 +1,3 @@
-from abc import ABC
-
-import uvicorn
 from dotenv import load_dotenv
 from flask_cors import CORS
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -44,15 +41,14 @@ app.register_blueprint(course_blueprint)
 app.register_blueprint(feedback_blueprint)
 
 
-load_model()
-fetch_courses(first_run=True)
+@app.route("/")
+def probe():
+    return "pong"
 
 
 if __name__ == "__main__":
-    uvicorn.run(
-        app,
-        port=8000,
-        host='0.0.0.0',
-        ssl_keyfile='key.pem',
-        ssl_certfile='cert.pem'
-    )
+    load_model()
+    fetch_courses(first_run=True)
+
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=8080)
