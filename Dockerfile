@@ -17,7 +17,7 @@ RUN rm -rf /root/.cache/pip
 FROM base AS production
 COPY . /usr/src/app/
 RUN chmod a+x /usr/src/app/docker/entrypoint.sh
-HEALTHCHECK --start-period=5s --interval=30s --timeout=5s CMD curl -f http://localhost:8000/openapi.yaml || exit 1
+HEALTHCHECK --start-period=5s --interval=30s --timeout=5s CMD curl -f http://localhost:8080/ || exit 1
 CMD ["/usr/src/app/docker/entrypoint.sh"]
 
 
