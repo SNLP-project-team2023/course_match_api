@@ -19,4 +19,6 @@ readiness_check:
   app_start_timeout_sec: 1200
 
 resources:
+  cpu: 2
+  memory_gb: 8
   disk_size_gb: 18

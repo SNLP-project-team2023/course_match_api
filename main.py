@@ -1,3 +1,5 @@
+import logging
+
 from dotenv import load_dotenv
 from flask_cors import CORS
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -12,6 +14,8 @@ from blueprints.feedback import feedback_blueprint
 from apiflask import APIFlask
 
 load_dotenv()
+
+logging.root.setLevel(logging.DEBUG)
 
 # Schedule fetch courses job to run every 24 hours at 03:00
 scheduler = BackgroundScheduler(daemon=True)

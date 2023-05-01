@@ -1,6 +1,7 @@
 import os
 
 from apiflask import APIBlueprint, fields, abort
+from dotenv import load_dotenv
 from sentence_transformers import util
 
 from scheduled.fetch_courses import get_saved_courses, get_saved_embeddings
@@ -10,19 +11,20 @@ from schemas.course import Course
 match_blueprint = APIBlueprint('match', __name__)
 
 
-coursesToView = 20
+load_dotenv()
 
-def top_k_courses(query_text, k, exclude_self=False):
+
+def top_k_courses(query_text, exclude_self=False):
     """
     Get top k courses
 
     Args:
         query_text (str): query text
-        k (int): k
         exclude_self (bool): is the query excluded
     Returns:
         top_courses: matched courses
     """
+    k = int(os.getenv('TOP_K_RESULTS'))
     model = get_saved_model()
     course_embeddings = get_saved_embeddings()
     courses = get_saved_courses()
@@ -68,7 +70,7 @@ def match_code(course_code):
 
     query_text = found_course.iloc[0]["desc"]
 
-    return top_k_courses(query_text, coursesToView, exclude_self=True)
+    return top_k_courses(query_text, exclude_self=True)
 
 
 @match_blueprint.get('/match/text')
@@ -77,5 +79,5 @@ def match_code(course_code):
 def match_text(query):
     query_text = query["query_text"]
 
-    return top_k_courses(query_text, coursesToView, exclude_self=False)
+    return top_k_courses(query_text, exclude_self=False)
 

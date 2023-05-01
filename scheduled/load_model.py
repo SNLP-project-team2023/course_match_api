@@ -34,5 +34,4 @@ def get_saved_model():
     Returns:
         model: saved model
     """
-    print("SAVED MODEL PATH", model_path)
     return pickle.load(open(model_path, "rb"))
