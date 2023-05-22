@@ -28,11 +28,11 @@ def top_k_courses(query_text, exclude_self=False):
     model = get_saved_model()
     course_embeddings = get_saved_embeddings()
     courses = get_saved_courses()
-    query_embedding = model.encode(query_text, convert_to_tensor=True)
+    query_embedding = model.encode(query_text, convert_to_tensor=True, show_progress_bar=False)
 
     k = k + 1 if exclude_self else k
     hits = util.semantic_search(
-        query_embedding, course_embeddings, score_function=util.dot_score, top_k=k)
+        query_embedding, course_embeddings, score_function=util.cos_sim, top_k=k)
     hit_idxs = [hit['corpus_id'] for hit in hits[0]]
     hit_idxs = hit_idxs[1:] if exclude_self else hit_idxs
     link_sisu_prefix = os.getenv('SISU_COURSE_PREFIX')
