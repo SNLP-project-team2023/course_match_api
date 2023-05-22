@@ -119,11 +119,11 @@ def fetch_courses(first_run=False):
         # get data
         raw_data = r.json()
 
-        en_data = [
-            course for course in raw_data if 'en' in course['languageOfInstructionCodes']]
+        # en_data = [
+        #     course for course in raw_data if 'en' in course['languageOfInstructionCodes']]
 
         logging.debug("Processing courses")
-        courses = pd.json_normalize(en_data)
+        courses = pd.json_normalize(raw_data)
         courses = preprocess_courses(courses)
         course_embeddings = encode_courses(courses)
 
