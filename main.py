@@ -17,10 +17,10 @@ load_dotenv()
 
 logging.root.setLevel(logging.DEBUG)
 
-# Schedule fetch courses job to run every 24 hours at 03:00
+# Schedule fetch courses job to run every 1 month at 03:00
 scheduler = BackgroundScheduler(daemon=True)
 trigger = CronTrigger(
-    year="*", month="*", day="*", hour="3", minute="0", second="0"
+    year="*", month="*", day="1", hour="3", minute="0", second="0"
 )
 
 scheduler.add_job(
