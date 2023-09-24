@@ -6,7 +6,7 @@ The project is build with ``apiflask``
 https://apiflask.com/
 ```
 
-Python version: 3.11
+Python version: 3.8.0
 
 Install all deps
 ```
@@ -16,7 +16,7 @@ pip install -r requirements.txt
 
 Start the api
 ```
-python app.py runserver
+python main.py
 ```
 
 Save deps into requirement.txt
@@ -24,7 +24,17 @@ Save deps into requirement.txt
 pip freeze > requirements.txt
 ```
 
-The swagger file is at ``API_URL/openapi.yaml`` 
+The swagger file is at ``API_URL/openapi.yaml``
+
+Generate docker image
+```commandline
+docker build --target production -t course_match_api .
+```
+
+Run docker image
+```commandline
+docker run -p 8080:8080 course_match_api
+```
 
 # [LICENSE: CC BY-NC 4.0](LICENSE)
 
